@@ -83,33 +83,72 @@ const client = new MongoClient(url);
 
 const express = require("express");
 const app = express();
-const urll =
-  "mongodb+srv://ijannat410:ijannat410123456789@cluster0.2xmaary.mongodb.net/e-com?retryWrites=true&w=majority";
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+
 const mongoose = require("mongoose");
-const databasee = 'e-com';
-const sale  = require('./sale');
+mongoose.set("strictQuery", false);
 
-// async function connect() {
-//   try {
-//    let result = await mongoose.connect(urll, {
-//     useNewUrlParser : true,
-//     useUnifiedTopology : true
-//    });
-//   //  let db = result.db(databasee);
-//   //  let collection = db.collection('sale')
-//     console.log("connected");
-//     console.log(sale.find({}));
-//   } catch (e) {
-//     console.error(e);
-//   }
-// }
-// connect();
-mongoose.connect(urll, {
-       useNewUrlParser : true,
-       useUnifiedTopology : true
-      });
+const databasee = "e-com";
+const sale = require("./sale");
+const port = process.env.PORT || 4000;
+const connectionn = process.env.CONNECTION;
+
+if(process.env.NODE_ENV !== 'production'){
+	require('dotenv').config();
+}
+
+const json = {
+  name: "jannat islam",
+  industry: "music",
+  "favourite colors": ["red", "blue", "green"],
+  "favorite numbers": [5, 3, 7],
+  "favorite people": [
+    {
+      name: "mom",
+      relationship: "parent",
+    },
+    {
+      name: "dad",
+      relationship: "parent",
+    },
+  ],
+};
+
+app.get("/api/data", (req, res) => {
+  res.send({ data: json });
+});
+
+app.post("/api/data", (req, res) => {
+  console.log(req.body);
+
+  res.send(req.body);
+});
+app.post("/", (req, res) => {
+  res.send("post methodd");
+});
 
 
-console.log(sale.find({} ));
+// mongoose connection_________
 
+async function connect() {
+  try {
+    await mongoose.connect(connectionn);
+    app.listen(port, () => {
+      console.log("app listening", port);
+    });
+    console.log("connected");
+  } catch (e) {
+    console.error(e);
+  }
+}
+connect();
 
+// mongoose.connect(urll, {
+//        useNewUrlParser : true,
+//        useUnifiedTopology : true
+//       });
+
+// console.log(sale.find({} ));
