@@ -2,7 +2,11 @@
 const mongose = require('mongoose');
 let saleSchema = new mongose.Schema({
     
-    name: String,
+    name: {
+        type: String,
+        required: true
+    },
+    industry: String,
 });
 
-module.exports = mongose.model('sale', saleSchema);
+module.exports = mongose.model('Sale', saleSchema);

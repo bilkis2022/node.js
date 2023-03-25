@@ -86,56 +86,81 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
 const databasee = "e-com";
-const sale = require("./sale");
+const Sale = require("./sale");
+const e = require("express");
 const port = process.env.PORT || 4000;
 const connectionn = process.env.CONNECTION;
 
-if(process.env.NODE_ENV !== 'production'){
-	require('dotenv').config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
 }
 
-const json = {
-  name: "jannat islam",
-  industry: "music",
-  "favourite colors": ["red", "blue", "green"],
-  "favorite numbers": [5, 3, 7],
-  "favorite people": [
-    {
-      name: "mom",
-      relationship: "parent",
-    },
-    {
-      name: "dad",
-      relationship: "parent",
-    },
-  ],
-};
+const json = [
+  {
+    name: "jannat islam",
+    industry: "music",
+  },
+  {
+    'name': 'john',
+    'industry': 'networking'
+  }
+];
+
+const sales = new Sale({
+  name: 'emu',
+  industry: 'finance'
+});
+// sales.save();
+
+app.get('/', (req, res)=>{
+  res.send(sales)
+})
 
 app.get("/api/data", (req, res) => {
-  res.send({ data: json });
+  res.send({ 'data': json });
 });
+
+app.get('/api/sales' , async (req, res)=>{
+  const result = await Sale.find();
+  res.send({'saless': result});
+});
+
 
 app.post("/api/data", (req, res) => {
   console.log(req.body);
 
   res.send(req.body);
 });
+
+
+app.post("/api/sales", async (req, res) => {
+  console.log(req.body);
+  const salee = new Sale(req.body);
+  try {
+    await salee.save();
+    res.status(201).json({salee});
+  } catch (e) {
+    res.status(400).json({error: e.message})
+  }
+  
+
+  res.send(req.body);
+});
+
+
 app.post("/", (req, res) => {
   res.send("post methodd");
 });
-
 
 // mongoose connection_________
 
 async function connect() {
   try {
-    await mongoose.connect(connectionn);
+    await mongoose.connect('mongodb+srv://ijannat410:ijannat410123456789@cluster0.2xmaary.mongodb.net/sales?retryWrites=true&w=majority');
     app.listen(port, () => {
       console.log("app listening", port);
     });
