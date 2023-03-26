@@ -77,9 +77,7 @@
 
 //____________mongodb___________
 
-const { MongoClient } = require("mongodb");
-const url = "mongodb://localhost:27017";
-const client = new MongoClient(url);
+
 
 const express = require("express");
 const app = express();
@@ -89,9 +87,9 @@ app.use(express.urlencoded({ extended: true }));
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
-const databasee = "e-com";
+
 const Sale = require("./sale");
-const e = require("express");
+
 const port = process.env.PORT || 4000;
 const connectionn = process.env.CONNECTION;
 
@@ -136,20 +134,28 @@ app.post("/api/data", (req, res) => {
   res.send(req.body);
 });
 
+app.put('/api/sales/:id', async(req, res)=>{
+  const salesId = req.params.id;
+  const result = await Sale.replaceOne({_id: salesId}, req.body);
+  console.log(result);
+  res.json({updatedCount: result.modifiedCount})
+})
+// _________to get an error______________
 
-app.post("/api/sales", async (req, res) => {
-  console.log(req.body);
-  const salee = new Sale(req.body);
-  try {
-    await salee.save();
-    res.status(201).json({salee});
-  } catch (e) {
-    res.status(400).json({error: e.message})
-  }
+
+// app.post("/api/sales", async (req, res) => {
+//   console.log(req.body);
+//   const salee = new Sale(req.body);
+//   try {
+//     await salee.save();
+//     res.status(201).json({salee});
+//   } catch (e) {
+//     res.status(400).json({error: e.message})
+//   }
   
 
-  res.send(req.body);
-});
+//   res.send(req.body);
+// });
 
 
 app.post("/", (req, res) => {
