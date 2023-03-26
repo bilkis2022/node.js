@@ -127,6 +127,31 @@ app.get('/api/sales' , async (req, res)=>{
   res.send({'saless': result});
 });
 
+app.get('/api/sales/:id', async(req, res)=>{
+  console.log({
+    reqParams: req.params,
+    reqQuery : req.query
+  });
+
+  try {
+    const {id: saleId} = req.params;
+    console.log(saleId);
+    const sale = await Sale.findById(saleId);
+    console.log(sale);
+
+    if(!sale){
+      res.status(404).json({error: 'user not found'})
+    }else{
+      res.json({sale})
+    };
+
+    
+  } catch (e) {
+    res.status(500).json({error: 'something went wrong'})
+  }
+  
+
+});
 
 app.post("/api/data", (req, res) => {
   console.log(req.body);
@@ -134,12 +159,26 @@ app.post("/api/data", (req, res) => {
   res.send(req.body);
 });
 
-app.put('/api/sales/:id', async(req, res)=>{
+app.put('/api/sales/:id', async (req, res)=>{
   const salesId = req.params.id;
   const result = await Sale.replaceOne({_id: salesId}, req.body);
   console.log(result);
   res.json({updatedCount: result.modifiedCount})
-})
+  
+});
+
+app.delete('/api/sales/:id', async(req, res)=>{
+  try {
+    const saleId = req.params.id;
+    const result = await Sale.deleteOne({_id : saleId});
+    res.json({deletedCount : result.deletedCount});
+  } catch (e) {
+    res.status(500).json({error : 'something went wrong'})
+  }
+  
+});
+console.log('start');
+
 // _________to get an error______________
 
 
